@@ -5,6 +5,9 @@ const express = require('express')
 const PORT = process.env.PORT || 3000
 const app = express()
 
+// load database
+require('./config/mongoose')
+
 // setting route
 app.get('/', (req, res) => {
   res.send('test')
