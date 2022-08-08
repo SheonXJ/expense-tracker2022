@@ -1,12 +1,15 @@
 // load package
 const express = require('express')
 
-// setting server
-const PORT = process.env.PORT || 3000
-const app = express()
-
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 // load database
 require('./config/mongoose')
+
+// setting server
+const PORT = process.env.PORT
+const app = express()
 
 // setting route
 app.get('/', (req, res) => {
