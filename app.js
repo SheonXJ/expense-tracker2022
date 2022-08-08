@@ -1,5 +1,6 @@
 // load package
 const express = require('express')
+const { pages } = require('./routes/index')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -11,10 +12,8 @@ require('./config/mongoose')
 const PORT = process.env.PORT
 const app = express()
 
-// setting route
-app.get('/', (req, res) => {
-  res.send('test')
-})
+// setting middleware
+app.use('/', pages)
 
 // activate server
 app.listen(PORT, () => {
