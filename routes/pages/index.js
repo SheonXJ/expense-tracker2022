@@ -9,7 +9,7 @@ const users = require('../pages/modules/users')
 router.use('/users', users)
 
 router.get('/', (req, res) => {
-  res.send('index')
+  res.render('index')
 })
 
 // 匯出路由器
