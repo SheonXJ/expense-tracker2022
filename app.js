@@ -1,6 +1,7 @@
 // load package
 const express = require('express')
 const flash = require('connect-flash')
+const usePassport = require('./config/passport')
 const session = require('express-session')
 const exhbs = require('express-handlebars')
 const { pages } = require('./routes/index')
@@ -22,13 +23,14 @@ app.engine('hbs', exhbs.engine({
 }))
 app.set('view engine', 'hbs')
 // setting middleware
-app.use(flash())
-app.use(express.urlencoded({ extended: true }))
 app.use(session({
   secret: 'ThisIsSecret',
   resave: false,
   saveUninitialized: true
 }))
+usePassport(app)
+app.use(flash())
+app.use(express.urlencoded({ extended: true }))
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg')
   res.locals.warning_msg = req.flash('warning_msg')
