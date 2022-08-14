@@ -16,10 +16,13 @@
   {{!-- Nav bar --}}
   <nav class="navbar navbar-light bg-light justify-content-between">
     <a class="navbar-brand" href="/">
-      <i class="fas fa-book fa-x mr-3">Expense Tracker</i>
+      <i class="fas fa-book fa-x mr-3">{{#if isAuthenticated}} {{user.name}}'s {{/if}}Expense Tracker</i>
     </a>
+    {{#if isAuthenticated}}
     <a class="btn btn-outline-dark" href="/users/logout">Logout</a>
+    {{else}}
     <a class="btn btn-outline-dark" href="/users/login">Login</a>
+    {{/if}}
   </nav>
   
   {{!-- partial template will replace the part of "body" here --}}
