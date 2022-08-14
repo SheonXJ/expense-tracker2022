@@ -1,6 +1,7 @@
 const passport = require('passport')
 const bcrypt = require('bcryptjs')
 const LocalStrategy = require('passport-local').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
 const User = require('../models/user')
 
 module.exports = app => {
@@ -22,6 +23,28 @@ module.exports = app => {
         if (!isMatch) return done(null, false, req.flash('warning_msg', '信箱或密碼不正確。'))
         return done(null, user)
       })
+      .catch(err => done(err, false))
+  }))
+
+  // 設定Facebook登入策略
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_ID,
+    clientSecret: process.env.FACEBOOK_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK,
+    profileFields: ['email', 'displayName']
+  }, (accessToken, refreshToken, profile, done) => {
+    const { email, name } = profile._json
+    return User.findOne({ email })
+      .then(user => {
+        if (user) return done(null, user)
+        const randomPassword = Math.random().toString(36).slice(-8)
+        return User.create({
+          name,
+          email,
+          password: bcrypt.hashSync(randomPassword, bcrypt.genSaltSync(10))
+        })
+      })
+      .then(newUser => done(null, newUser))
       .catch(err => done(err, false))
   }))
 
