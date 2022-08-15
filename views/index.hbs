@@ -1,1 +1,58 @@
-<h1>home</h1>
+<div class="container search-bar mt-5 ">
+  <div class="categoryOption mb-5 mx-auto" style="display: block; width: 640px;">
+    <form action="/expenseTracker/search" method="GET">
+      <select class="form-control" name="sort" id="sort" onchange="this.form.submit()">
+        <option value="all">類別...</option>
+        <option value="家居物業">家居物業</option>
+        <option value="交通出行">交通出行</option>
+        <option value="休閒娛樂">休閒娛樂</option>
+        <option value="餐飲食品">餐飲食品</option>
+        <option value="其他">其他</option>
+      </select>
+    </form>
+  </div>
+</div>
+
+<div class="container totalAmount my-5">
+  <div class="row">
+    <div class="col-6 mx-auto d-flex justify-content-center">
+      總金額:
+      <h1>{{{totalAmount}}}</h1>
+    </div>
+  </div>
+</div>
+
+<div class="container recordList mt-5">
+  <div class="row body">
+    <div class="col-8 mx-auto">
+      {{#each records}}
+      <div class="d-flex align-items-center text-center border-bottom border-info">
+        <div class="col-2">
+          <i class='{{this.icon}}'></i>
+        </div>
+        <div class="col-4 flex-column text-left">
+          <h4>{{this.name}}</h4>
+          {{this.date}}
+        </div>
+        <div class="col-2">{{this.amount}}</div>
+        <div class="col-2">
+          <a href="/expenseTracker/{{this._id}}/edit">
+            <button class="btn btn-primary">修改</button>
+          </a>
+        </div>
+        <form action="/expenseTracker/{{this._id}}?_method=DELETE" method="POST">
+          <button type="submit" class="btn btn-danger">刪除</button>
+        </form>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="createBtn text-center mt-5">
+      <a href="/expenseTracker/create">
+        <button class="btn btn-info">新增支出</button>
+      </a>
+    </div>
+  </div>
+</div>
