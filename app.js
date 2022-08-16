@@ -5,6 +5,7 @@ const usePassport = require('./config/passport')
 const session = require('express-session')
 const exhbs = require('express-handlebars')
 const { pages } = require('./routes/index')
+const handlebarsHelper = require('./helpers/handlebars-helper')
 const { isAuthenticated, getUser } = require('./helpers/auth-helper')
 
 if (process.env.NODE_ENV !== 'production') {
@@ -20,7 +21,8 @@ const app = express()
 // setting template engine
 app.engine('hbs', exhbs.engine({
   defaultLayout: 'main',
-  extname: 'hbs'
+  extname: 'hbs',
+  helpers: handlebarsHelper
 }))
 app.set('view engine', 'hbs')
 // setting middleware
