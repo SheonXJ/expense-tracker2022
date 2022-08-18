@@ -32,5 +32,24 @@ router.get('/', (req, res, next) => {
     })
     .catch(err => next(err))
 })
+router.get('/create', (req, res) => {
+  const nowDate = dateformat(Date.now(), 'yyyy-mm-dd')
+  Category.find()
+    .lean()
+    .then(categories => res.render('create', { categories, nowDate }))
+})
+router.post('/create', (req, res, next) => {
+  const { categoryId, name, count, date } = req.body
+  if (!categoryId || !name || !count || !date) throw new Error('建立失敗，請確認資料！')
+  Record.create({
+    name,
+    count,
+    date,
+    categoryId,
+    userId: req.user._id
+  })
+    .then(() => res.redirect('/'))
+    .catch(err => next(err))
+})
 
 module.exports = router
