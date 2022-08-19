@@ -1,0 +1,53 @@
+{{>message}}
+<div class="form-group form-row text-center">
+  <div class="col-4 my-auto" style="letter-spacing:10px;">
+    <label for="name">名稱*</label>
+  </div>
+  <div class="col-8">
+    <input type="text" class="form-control" name="name" id="name" value="{{record.name}}" required>
+  </div>
+</div>
+
+<div class="form-group form-row text-center mt-4">
+  <div class="col-4 my-auto" style="letter-spacing:10px;">
+    <label for="date">日期*</label>
+  </div>
+  <div class="col-8">
+    <input type="date" class="form-control" name="date" id="date" 
+    {{#if nowDate}} 
+      value="{{nowDate}}" 
+    {{else}} 
+      value="{{record.date}}" 
+    {{/if}} required>
+  </div>
+</div>
+
+<div class="form-group form-row text-center mt-4">
+  <div class="col-4 my-auto" style="letter-spacing:10px;">
+    <label for="categoryId">類別*</label>
+  </div>
+  <div class="col-8">
+    <select class="custom-select" name="categoryId" id="categoryId" required>
+      <option value ='' selected>選擇類別...</option>
+      {{#each categories}}
+      <option value={{this._id}} {{#ifCond ../record.categoryId.name this.name}} selected {{/ifCond}}>{{this.name_cn}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+
+<div class="form-group form-row text-center mt-4">
+  <div class="col-4 my-auto" style="letter-spacing:10px;">
+    <label for="count">金額*</label>
+  </div>
+  <div class="col-8">
+    <input type="number" class="form-control" name="count" id="count" value="{{record.count}}" required>
+  </div>
+</div>
+
+<div class="form-group form-row text-center mt-4">
+  <div class="col-4"></div>
+  <div class="col-8">
+    <button type="submit" class="btn btn-info btn-block">送出</button>
+  </div>
+</div>

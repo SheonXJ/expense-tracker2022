@@ -1,5 +1,6 @@
 <div class="container search-bar mt-5 ">
   <div class="categoryOption mb-5 mx-auto" style="display: block; width: 640px;">
+    {{>message}}
     <form action="/records" method="GET">
       <select class="form-control" name="sort" id="sort" onchange="this.form.submit()">
         <option value='' {{#ifCond sort ''}}selected{{/ifCond}}>類別...</option>
@@ -33,7 +34,7 @@
         </div>
         <div class="col-2">{{this.count}}</div>
         <div class="col-2">
-          <a href="/expenseTracker/{{this._id}}/edit">
+          <a href="/records/{{this._id}}/edit">
             <button class="btn btn-primary">修改</button>
           </a>
         </div>
