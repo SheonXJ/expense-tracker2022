@@ -1,0 +1,16 @@
+<div class="justify-content-center align-items-center d-flex my-3">
+  <p class="text-danger mr-5">*為必填欄位</p>
+  <h2>修改支出</h2>
+</div>
+
+<div class="container my-2 p-2">
+  <div class="row">
+    <div class="col-5 mx-auto">
+      <form action="/records/{{record._id}}/edit?_method=PUT" method="POST">
+
+        {{>recordForm}}
+      
+      </form>
+    </div>
+  </div>
+</div>
