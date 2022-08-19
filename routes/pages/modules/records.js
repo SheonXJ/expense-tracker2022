@@ -92,5 +92,10 @@ router.post('/:id/edit', (req, res, next) => {
     })
     .catch(err => next(err))
 })
+router.delete('/:id', (req, res) => {
+  Record.findById(req.params.id)
+    .then(record => record.delete())
+    .then(() => res.redirect('/records'))
+})
 
 module.exports = router

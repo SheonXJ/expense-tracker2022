@@ -1,6 +1,7 @@
 // load package
 const express = require('express')
 const flash = require('connect-flash')
+const methodOverride = require('method-override')
 const usePassport = require('./config/passport')
 const session = require('express-session')
 const exhbs = require('express-handlebars')
@@ -33,6 +34,7 @@ app.use(session({
 }))
 usePassport(app)
 app.use(flash())
+app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: true }))
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg')
