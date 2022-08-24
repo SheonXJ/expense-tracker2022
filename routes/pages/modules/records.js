@@ -1,15 +1,18 @@
-const dateformat = require('dateformat')
 const express = require('express')
 const router = express.Router()
-
+const dateformat = require('dateformat')
 const Category = require('../../../models/category')
 const Record = require('../../../models/record')
 const { arrangeCategory } = require('../../../helpers/function-helper')
 
 router.get('/', (req, res, next) => {
   const sort = req.query.sort || null
+  // const date = dateformat(req.query.date, 'yyyy-mm-dd') || dateformat(Date.now(), 'yyyy-mm-dd')
+  const date = req.query.date || dateformat(Date.now(), 'yyyy-mm-dd')
+  const dateStart = new Date(date).setHours(0, 0, 0, 0)
+  const dateEnd = new Date(date).setHours(23, 59, 59, 999)
   Promise.all([
-    Record.find({ userId: req.user._id })
+    Record.find({ userId: req.user._id, date: { $gte: dateStart, $lt: dateEnd } })
       .populate({
         path: 'categoryId',
         model: 'Category'
@@ -31,12 +34,14 @@ router.get('/', (req, res, next) => {
         record.icon = record.categoryId.name_icon
         totalCount += record.count
       })
-      return res.render('index', { records, totalCount, categories, sort })
+      return res.render('index', { records, totalCount, categories, sort, date })
     })
     .catch(err => next(err))
 })
 router.get('/create', (req, res) => {
-  const nowDate = dateformat(Date.now(), 'yyyy-mm-dd')
+  const date = req.query.date || Date.now()
+  const nowDate = dateformat(date, 'yyyy-mm-dd')
+  console.log(date, nowDate)
   Category.find()
     .lean()
     .then(categories => {
@@ -75,7 +80,7 @@ router.get('/:id/edit', (req, res) => {
       return res.render('edit', { record, categories })
     })
 })
-router.post('/:id/edit', (req, res, next) => {
+router.put('/:id/edit', (req, res, next) => {
   const { name, date, count, categoryId } = req.body
   Record.findById(req.params.id)
     .then(record => {
