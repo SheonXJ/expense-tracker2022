@@ -1,4 +1,6 @@
-<div class="container search-bar mt-5 ">
+{{> calendar/index }}
+
+{{!-- <div class="container search-bar mt-5 ">
   <div class="categoryOption mb-5 mx-auto" style="display: block; width: 640px;">
     {{>message}}
     <form action="/records" method="GET">
@@ -10,8 +12,8 @@
       </select>
     </form>
   </div>
-</div>
-<div class="container totalAmount my-5">
+</div> --}}
+<div class="container totalAmount">
   <div class="row">
     <div class="col-6 mx-auto d-flex justify-content-center">
       總金額:
@@ -48,7 +50,7 @@
 
   <div class="footer">
     <div class="createBtn text-center mt-5">
-      <a href="/records/create">
+      <a href='/records/create?date={{date}}'>
         <button class="btn btn-info">新增支出</button>
       </a>
     </div>

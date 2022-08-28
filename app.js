@@ -1,6 +1,7 @@
 // load package
 const express = require('express')
 const flash = require('connect-flash')
+const path = require('path')
 const methodOverride = require('method-override')
 const usePassport = require('./config/passport')
 const session = require('express-session')
@@ -32,6 +33,8 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+// eslint-disable-next-line n/no-path-concat
+app.use('/calendar', express.static(path.join(__dirname + '/views/partials/calendar')))
 usePassport(app)
 app.use(flash())
 app.use(methodOverride('_method'))
