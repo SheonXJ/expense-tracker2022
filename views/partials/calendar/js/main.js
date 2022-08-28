@@ -155,7 +155,6 @@
       month = today.getMonth()
       year = today.getFullYear()
       day = today.getDate()
-      console.log(selectedDay)
       this.options = undefined
       this.selectedDay = null
       delCookie('selected_day')

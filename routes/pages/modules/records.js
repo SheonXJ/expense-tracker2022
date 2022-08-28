@@ -7,7 +7,7 @@ const { arrangeCategory } = require('../../../helpers/function-helper')
 
 router.get('/', (req, res, next) => {
   const sort = req.query.sort || null
-  // const date = dateformat(req.query.date, 'yyyy-mm-dd') || dateformat(Date.now(), 'yyyy-mm-dd')
+  if (!req.query.date) res.clearCookie('selected_day')
   const date = req.query.date || dateformat(Date.now(), 'yyyy-mm-dd')
   const dateStart = new Date(date).setHours(0, 0, 0, 0)
   const dateEnd = new Date(date).setHours(23, 59, 59, 999)
