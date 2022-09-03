@@ -41,7 +41,6 @@ router.get('/', (req, res, next) => {
 router.get('/create', (req, res) => {
   const date = req.query.date || Date.now()
   const nowDate = dateformat(date, 'yyyy-mm-dd')
-  console.log(date, nowDate)
   Category.find()
     .lean()
     .then(categories => {
@@ -51,11 +50,14 @@ router.get('/create', (req, res) => {
 })
 router.post('/create', (req, res, next) => {
   const { categoryId, name, count, date } = req.body
+  // 將date加入現在時間
+  const nowHours = new Date().toLocaleTimeString('en-GB')
+  const fullDate = new Date(`${date}T${nowHours}`)
   if (!categoryId || !name || !count || !date) throw new Error('建立失敗，請確認資料！')
   Record.create({
     name,
     count,
-    date,
+    date: fullDate,
     categoryId,
     userId: req.user._id
   })

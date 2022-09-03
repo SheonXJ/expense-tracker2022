@@ -21,11 +21,11 @@
     {{#if isAuthenticated}}
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
+        <li class="nav-item {{#unless status}}active{{/unless}}">
           <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Analysis</a>
+        <li class="nav-item {{#if status}}active{{/if}}">
+          <a class="nav-link" href="/analysis/overview">Analysis</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
