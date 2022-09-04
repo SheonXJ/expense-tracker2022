@@ -9,6 +9,7 @@ router.get('/overview', (req, res, next) => {
   const nowDate = new Date()
   const currentYear = nowDate.getFullYear()
   const currentMonthIndex = req.query.month ? Number(req.query.month) : nowDate.getMonth() // 月份index從0開始
+  const currentMonth = (currentMonthIndex + 1) + '月'
   const yearStart = new Date(`${currentYear}-01-01T00:00:00.000Z`) // 先加回UTC+8
   const yearEnd = new Date(`${currentYear}-12-31T23:59:59.999Z`) // 先加回UTC+8
   const monthStart = new Date(currentYear, currentMonthIndex, 1, 0, 0, 0, 0)
@@ -66,7 +67,7 @@ router.get('/overview', (req, res, next) => {
         record.date = dateformat(record.date, 'yyyy-mm-dd')
         record.icon = record.categoryId.name_icon
       })
-      res.render('analysis-overview', { currentMonthIndex, currentYear, status: 'overview', everyMonthCount, topRecords, categoryRecords, currentMonthCount })
+      res.render('analysis-overview', { currentMonthIndex, currentYear, currentMonth,status: 'overview', everyMonthCount, topRecords, categoryRecords, currentMonthCount })
     })
     .catch(err => next(err))
 })
