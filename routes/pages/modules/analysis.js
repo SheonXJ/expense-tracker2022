@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const dateformat = require('dateformat')
+const { translateDay } = require('../../../helpers/function-helper')
 
 const Record = require('../../../models/record')
 
@@ -8,11 +9,10 @@ router.get('/overview', (req, res, next) => {
   const nowDate = new Date()
   const currentYear = nowDate.getFullYear()
   const currentMonthIndex = req.query.month ? Number(req.query.month) : nowDate.getMonth() // 月份index從0開始
-  const currentDays = new Date(currentYear, (currentMonthIndex + 1), 0).getDate()
   const yearStart = new Date(`${currentYear}-01-01T00:00:00.000Z`) // 先加回UTC+8
   const yearEnd = new Date(`${currentYear}-12-31T23:59:59.999Z`) // 先加回UTC+8
   const monthStart = new Date(currentYear, currentMonthIndex, 1, 0, 0, 0, 0)
-  const monthEnd = new Date(currentYear, currentMonthIndex, currentDays, 23, 59, 59, 999)
+  const monthEnd = new Date(currentYear, (currentMonthIndex + 1), 0, 23, 59, 59, 999)
   Promise.all([
     // 查找每月份支出
     Record.aggregate([
@@ -70,11 +70,40 @@ router.get('/overview', (req, res, next) => {
     })
     .catch(err => next(err))
 })
-router.get('/detail', (req, res) => {
+router.get('/detail', (req, res, next) => {
   const nowDate = new Date()
   const currentYear = nowDate.getFullYear()
-  const currentMonth = nowDate.getMonth() + 1
-  res.render('analysis-overview', { currentMonth, currentYear, status: 'detail' })
+  const currentMonthIndex = req.query.month ? Number(req.query.month) : nowDate.getMonth() // 月份index從0開始
+  const monthStart = new Date(currentYear, currentMonthIndex, 1, 8, 0, 0, 0)
+  const monthEnd = new Date(currentYear, (currentMonthIndex + 1), 0, 31, 59, 59, 999)
+  Record.aggregate([
+    { $match: { userId: req.user._id, date: { $gte: monthStart, $lt: monthEnd } } },
+    { $lookup: {
+      from: 'categories',
+      localField: 'categoryId',
+      foreignField: '_id',
+      as: 'category_docs'
+    } },
+    { $unwind: '$category_docs' },
+    { $group: {
+      _id: { $dateToString: { format: '%Y-%m-%d %w', date: { $add: ['$date', 28800000] } } },
+      total: { $sum: '$count' },
+      records: {
+        $push: {
+          _id: '$_id',
+          name: '$name',
+          count: '$count',
+          categoryIcon: '$category_docs.name_icon'
+        }
+      }
+    } }
+  ])
+    .sort({ _id: 1 })
+    .then(categoryRecords => {
+      translateDay(categoryRecords)
+      res.render('analysis-detail', { currentMonthIndex, currentYear, status: 'detail', categoryRecords })
+    })
+    .catch(err => next(err))
 })
 router.get('/category', (req, res) => {
   const nowDate = new Date()
