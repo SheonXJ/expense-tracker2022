@@ -1,0 +1,54 @@
+{{>analysis-tabs}}
+<canvas id="chart" width="200" height="50"></canvas>
+<div class="container">
+  <div class="row">
+    {{#each records}}
+    <div class="col-6 my-3">
+      <div class="accordion" id="categoryAccordion{{@index}}">
+        <div class="card  bg-light">
+          <div class="bg-info rounded" id="headingOne">
+            <button class="btn btn-info btn-block text-left" type="button" data-toggle="collapse"
+              data-target="#category{{@index}}" aria-expanded="true" aria-controls="collapseOne">
+              <div class="d-flex align-items-center">
+                <div class="col-2 align-items-center text-left">
+                  <i class='{{this.category_docs.[0].name_icon}}'></i>
+                </div>
+                <div class="col-8">
+                  <b class="fs-6">{{this.category_docs.[0].name_cn}}</b>
+                </div>
+                <div class="col-4">
+                  <b class="fs-6">${{this.total}}</b>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <div id="category{{@index}}" class="collapse show my-3" aria-labelledby="headingOne"
+            data-parent="#categoryAccordion{{@index}}">
+            {{#each this.records}}
+            <div class="d-flex align-items-center text-center mb-2">
+              <div class="col-2 text-left">
+                <h4>{{this.name}}</h4>
+              </div>
+              <div class="col-4 text-left">
+                {{this.date}}
+              </div>
+              <div class="col-2"><strong>${{this.count}}</strong></div>
+              <div class="col-2">
+                <a href="/records/{{this._id}}/edit">
+                  <button class="btn btn-outline-primary">修改</button>
+                </a>
+              </div>
+              <form action="/records/{{this._id}}?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-outline-danger"
+                  onclick="return confirm(`確定要刪除 {{ this.name }} 嗎？`)">刪除</button>
+              </form>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

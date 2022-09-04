@@ -101,7 +101,7 @@ router.get('/detail', (req, res, next) => {
   ])
     .sort({ _id: 1 })
     .then(categoryRecords => {
-      // 整理每日花費紀錄
+      // 整理每日花費紀錄 for chart
       let recordIndex = 0
       const everyDayCount = Array.from({ length: 31 }, (V, i) => {
         if (categoryRecords[recordIndex]) {
@@ -118,11 +118,46 @@ router.get('/detail', (req, res, next) => {
     })
     .catch(err => next(err))
 })
-router.get('/category', (req, res) => {
+router.get('/category', (req, res, next) => {
   const nowDate = new Date()
   const currentYear = nowDate.getFullYear()
-  const currentMonth = nowDate.getMonth() + 1
-  res.render('analysis-overview', { currentMonth, currentYear, status: 'category' })
+  const currentMonthIndex = req.query.month ? Number(req.query.month) : nowDate.getMonth()
+  const monthStart = new Date(currentYear, currentMonthIndex, 1, 8, 0, 0, 0)
+  const monthEnd = new Date(currentYear, (currentMonthIndex + 1), 0, 31, 59, 59, 999)
+  Record.aggregate([
+    { $match: { userId: req.user._id, date: { $gte: monthStart, $lt: monthEnd } } },
+    { $group: {
+      _id: '$categoryId',
+      total: { $sum: '$count' },
+      records: {
+        $push: {
+          _id: '$_id',
+          name: '$name',
+          count: '$count',
+          date: '$date'
+        }
+      }
+    } },
+    { $lookup: {
+      from: 'categories',
+      localField: '_id',
+      foreignField: '_id',
+      as: 'category_docs'
+    }}
+  ])
+    .sort({ total: -1 })
+    .then(records => {
+      // 整理資料時間格式
+      let everyCategoryCount = 0
+      records.forEach(categoryRecord => {
+        everyCategoryCount += categoryRecord.total
+        categoryRecord.records.forEach(record => {
+          record.date = dateformat(record.date, 'yyyy-mm-dd dddd')
+        })
+      })
+      res.render('analysis-category', { currentMonthIndex, currentYear, status: 'category', everyCategoryCount, records })
+    })
+    .catch(err => next(err))
 })
 router.get('/ranking', (req, res) => {
   const nowDate = new Date()
