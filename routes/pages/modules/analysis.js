@@ -88,6 +88,7 @@ router.get('/detail', (req, res, next) => {
     { $group: {
       _id: { $dateToString: { format: '%Y-%m-%d %w', date: { $add: ['$date', 28800000] } } },
       total: { $sum: '$count' },
+      currentDay: { $push: { $dateToString: { format: '%d', date: { $add: ['$date', 28800000] } } } },
       records: {
         $push: {
           _id: '$_id',
@@ -100,8 +101,20 @@ router.get('/detail', (req, res, next) => {
   ])
     .sort({ _id: 1 })
     .then(categoryRecords => {
+      // 整理每日花費紀錄
+      let recordIndex = 0
+      const everyDayCount = Array.from({ length: 31 }, (V, i) => {
+        if (categoryRecords[recordIndex]) {
+          if (Number(categoryRecords[recordIndex].currentDay[0]) === (i + 1)) {
+            recordIndex++
+            return categoryRecords[recordIndex - 1].total
+          }
+        }
+        return 0
+      })
+      // 整理日期格式
       translateDay(categoryRecords)
-      res.render('analysis-detail', { currentMonthIndex, currentYear, status: 'detail', categoryRecords })
+      res.render('analysis-detail', { currentMonthIndex, currentYear, status: 'detail', categoryRecords, everyDayCount })
     })
     .catch(err => next(err))
 })
