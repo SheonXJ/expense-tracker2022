@@ -160,11 +160,5 @@ router.get('/category', (req, res, next) => {
     })
     .catch(err => next(err))
 })
-router.get('/ranking', (req, res) => {
-  const nowDate = new Date()
-  const currentYear = nowDate.getFullYear()
-  const currentMonth = nowDate.getMonth() + 1
-  res.render('analysis-overview', { currentMonth, currentYear, status: 'ranking' })
-})
 
 module.exports = router

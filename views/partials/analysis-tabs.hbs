@@ -9,9 +9,6 @@
     <li class="nav-item">
       <a class="nav-link {{#ifCond status 'category'}}active{{/ifCond}}" href="/analysis/category">類別</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link {{#ifCond status 'ranking'}}active{{/ifCond}}" href="/analysis/ranking">排行</a>
-    </li>
     <div class="">
       <form action="/analysis/{{status}}" method="GET">
         <select class="form-control" name="month" id="month" onchange="this.form.submit()">
