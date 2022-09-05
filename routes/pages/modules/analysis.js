@@ -102,7 +102,7 @@ router.get('/detail', (req, res, next) => {
   ])
     .sort({ _id: 1 })
     .then(categoryRecords => {
-      // 整理每日花費紀錄 for chart
+      // 建立每日花費紀錄陣列 for chart
       let recordIndex = 0
       const everyDayCount = Array.from({ length: 31 }, (V, i) => {
         if (categoryRecords[recordIndex]) {
@@ -153,7 +153,7 @@ router.get('/category', (req, res, next) => {
       records.forEach(categoryRecord => {
         everyCategoryCount += categoryRecord.total
         categoryRecord.records.forEach(record => {
-          record.date = dateformat(record.date, 'yyyy-mm-dd dddd')
+          record.date = dateformat(record.date, 'yyyy-mm-dd')
         })
       })
       res.render('analysis-category', { currentMonthIndex, currentYear, status: 'category', everyCategoryCount, records })

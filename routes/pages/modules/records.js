@@ -102,7 +102,7 @@ router.put('/:id/edit', (req, res, next) => {
 router.delete('/:id', (req, res) => {
   Record.findById(req.params.id)
     .then(record => record.delete())
-    .then(() => res.redirect('/records'))
+    .then(() => res.redirect('back'))
 })
 
 module.exports = router
