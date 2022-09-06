@@ -35,6 +35,8 @@ app.use(session({
 }))
 // eslint-disable-next-line n/no-path-concat
 app.use('/calendar', express.static(path.join(__dirname + '/views/partials/calendar')))
+// eslint-disable-next-line n/no-path-concat
+app.use('/stylesheets', express.static(path.join(__dirname + '/stylesheets')))
 usePassport(app)
 app.use(flash())
 app.use(methodOverride('_method'))

@@ -43,8 +43,8 @@ module.exports = app => {
           email,
           password: bcrypt.hashSync(randomPassword, bcrypt.genSaltSync(10))
         })
+          .then(newUser => done(null, newUser))
       })
-      .then(newUser => done(null, newUser))
       .catch(err => done(err, false))
   }))
 

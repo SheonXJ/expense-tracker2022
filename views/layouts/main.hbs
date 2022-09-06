@@ -14,11 +14,32 @@
 
 <body>
   {{!-- Nav bar --}}
-  <nav class="navbar navbar-light bg-light justify-content-between">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <a class="navbar-brand" href="/">
       <i class="fas fa-book fa-x mr-3">{{#if isAuthenticated}} {{user.name}}'s {{/if}}Expense Tracker</i>
     </a>
     {{#if isAuthenticated}}
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item {{#unless status}}active{{/unless}}">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item {{#if status}}active{{/if}}">
+          <a class="nav-link" href="/analysis/overview">Analysis</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+            Setting
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/records/create">新增支出</a>
+            <a class="dropdown-item" href="#">新增分類</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">個人檔案</a>
+          </div>
+        </li>
+      </ul>
+    </div>
     <a class="btn btn-outline-dark" href="/users/logout">Logout</a>
     {{else}}
     <a class="btn btn-outline-dark" href="/users/login">Login</a>

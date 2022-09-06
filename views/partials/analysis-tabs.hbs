@@ -1,0 +1,31 @@
+<div class="mx-auto">
+  <ul class="nav nav-tabs my-3">
+    <li class="nav-item">
+      <a class="nav-link {{#ifCond status 'overview'}}active{{/ifCond}}" href="/analysis/overview">總覽</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{#ifCond status 'detail'}}active{{/ifCond}}" href="/analysis/detail">明細</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{#ifCond status 'category'}}active{{/ifCond}}" href="/analysis/category">類別</a>
+    </li>
+    <div class="">
+      <form action="/analysis/{{status}}" method="GET">
+        <select class="form-control" name="month" id="month" onchange="this.form.submit()">
+          <option value="0" {{#ifCond currentMonthIndex 0}} selected {{/ifCond}}>{{currentYear}}年1月份</option>
+          <option value="1" {{#ifCond currentMonthIndex 1}} selected {{/ifCond}}>{{currentYear}}年2月份</option>
+          <option value="2" {{#ifCond currentMonthIndex 2}} selected {{/ifCond}}>{{currentYear}}年3月份</option>
+          <option value="3" {{#ifCond currentMonthIndex 3}} selected {{/ifCond}}>{{currentYear}}年4月份</option>
+          <option value="4" {{#ifCond currentMonthIndex 4}} selected {{/ifCond}}>{{currentYear}}年5月份</option>
+          <option value="5" {{#ifCond currentMonthIndex 5}} selected {{/ifCond}}>{{currentYear}}年6月份</option>
+          <option value="6" {{#ifCond currentMonthIndex 6}} selected {{/ifCond}}>{{currentYear}}年7月份</option>
+          <option value="7" {{#ifCond currentMonthIndex 7}} selected {{/ifCond}}>{{currentYear}}年8月份</option>
+          <option value="8" {{#ifCond currentMonthIndex 8}} selected {{/ifCond}}>{{currentYear}}年9月份</option>
+          <option value="9" {{#ifCond currentMonthIndex 9}} selected {{/ifCond}}>{{currentYear}}年10月份</option>
+          <option value="10" {{#ifCond currentMonthIndex 10}} selected {{/ifCond}}>{{currentYear}}年11月份</option>
+          <option value="11" {{#ifCond currentMonthIndex 11}} selected {{/ifCond}}>{{currentYear}}年12月份</option>
+        </select>
+      </form>
+    </div>
+  </ul>
+</div>

@@ -1,0 +1,6 @@
+hr.style-one {
+  border: 0;
+  height: 3px;
+  background: rgb(145, 42, 42);
+  background-image: linear-gradient(to right, #ccc, #333, #ccc);
+}
