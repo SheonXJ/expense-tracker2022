@@ -1,15 +1,18 @@
-const dateformat = require('dateformat')
 const express = require('express')
 const router = express.Router()
-
+const dateformat = require('dateformat')
 const Category = require('../../../models/category')
 const Record = require('../../../models/record')
 const { arrangeCategory } = require('../../../helpers/function-helper')
 
 router.get('/', (req, res, next) => {
   const sort = req.query.sort || null
+  if (!req.query.date) res.clearCookie('selected_day')
+  const date = req.query.date || dateformat(Date.now(), 'yyyy-mm-dd')
+  const dateStart = new Date(date).setHours(0, 0, 0, 0)
+  const dateEnd = new Date(date).setHours(23, 59, 59, 999)
   Promise.all([
-    Record.find({ userId: req.user._id })
+    Record.find({ userId: req.user._id, date: { $gte: dateStart, $lt: dateEnd } })
       .populate({
         path: 'categoryId',
         model: 'Category'
@@ -31,12 +34,13 @@ router.get('/', (req, res, next) => {
         record.icon = record.categoryId.name_icon
         totalCount += record.count
       })
-      return res.render('index', { records, totalCount, categories, sort })
+      return res.render('index', { records, totalCount, categories, sort, date })
     })
     .catch(err => next(err))
 })
 router.get('/create', (req, res) => {
-  const nowDate = dateformat(Date.now(), 'yyyy-mm-dd')
+  const date = req.query.date || Date.now()
+  const nowDate = dateformat(date, 'yyyy-mm-dd')
   Category.find()
     .lean()
     .then(categories => {
@@ -46,11 +50,14 @@ router.get('/create', (req, res) => {
 })
 router.post('/create', (req, res, next) => {
   const { categoryId, name, count, date } = req.body
+  // 將date加入現在時間
+  const nowHours = new Date().toLocaleTimeString('en-GB')
+  const fullDate = new Date(`${date}T${nowHours}`)
   if (!categoryId || !name || !count || !date) throw new Error('建立失敗，請確認資料！')
   Record.create({
     name,
     count,
-    date,
+    date: fullDate,
     categoryId,
     userId: req.user._id
   })
@@ -75,7 +82,7 @@ router.get('/:id/edit', (req, res) => {
       return res.render('edit', { record, categories })
     })
 })
-router.post('/:id/edit', (req, res, next) => {
+router.put('/:id/edit', (req, res, next) => {
   const { name, date, count, categoryId } = req.body
   Record.findById(req.params.id)
     .then(record => {
@@ -95,7 +102,7 @@ router.post('/:id/edit', (req, res, next) => {
 router.delete('/:id', (req, res) => {
   Record.findById(req.params.id)
     .then(record => record.delete())
-    .then(() => res.redirect('/records'))
+    .then(() => res.redirect('back'))
 })
 
 module.exports = router
