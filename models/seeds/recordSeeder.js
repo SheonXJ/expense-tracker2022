@@ -9,15 +9,16 @@ if (process.env.NODE_EVN !== 'production') {
 
 const db = require('../../config/mongoose')
 
-// record seed data
-const SEED_RECORD = [
-  { name: '午餐', date: '2019/04/23', count: 60, category_cn: '餐飲食品' },
-  { name: '晚餐', date: '2019/04/23', count: 60, category_cn: '餐飲食品' },
-  { name: '捷運', date: '2019/04/23', count: 120, category_cn: '交通出行' },
-  { name: '電影：驚奇隊長', date: '2019/04/23', count: 220, category_cn: '休閒娛樂' },
-  { name: '租金', date: '2015/04/01', count: 25000, category_cn: '家居物業' }
-]
+// function
+const getRandomInt = (max) => {
+  return Math.floor(Math.random() * max)
+}
 
+// record seed data
+const SEED_DATA = {
+  name: ['早餐', '午餐', '晚餐', '宵夜', '捷運', '電影', '租金', '電費', '寵物'],
+  count: [99, 120, 250, 399, 545, 999, 1200, 3500, 2150, 736],
+}
 const SEED_USER = [
   {
     name: 'User1',
@@ -31,32 +32,38 @@ const SEED_USER = [
   }
 ]
 
-db.once('open', () => {
-  Promise.all(SEED_USER.map(seedUser => {
-    // 整理SEED_USER資料並建立user
-    return bcrypt
-      .genSalt(10)
-      .then(salt => bcrypt.hash(seedUser.password, salt))
-      .then(hash => User.create({
-        name: seedUser.name,
-        email: seedUser.email,
-        password: hash
-      }))
-      .then(user => {
-        // 整理SEED_RECORD資料並建立record
-        return Promise.all(SEED_RECORD.map(record => {
-          return Category.findOne({ name_cn: record.category_cn })
-            .then(category => {
-              record.userId = user._id
-              record.categoryId = category._id
-            })
-            .then(() => Record.create(record))
-        }))
+db.once('open', async () => {
+  // find category data for Id
+  const category = await Category.find().select(['_id'])
+  const currentYear = new Date().getFullYear()
+  // create User then create 12month Arr then create records Arr
+  await Promise.all(SEED_USER.map(async (seed_user) => {
+    // create User
+    seed_user.password = bcrypt.hashSync(seed_user.password, bcrypt.genSaltSync(10), null)
+    const user = await User.create(seed_user)
+    // create 12 month Arr
+    for (let i = 0; i < 12; i++) {
+      // get how many days in month
+      const nDays = new Date(currentYear, (i + 1), 0).getDate()
+      // create records Arr
+      const records = Array.from({ length: 30 }).map(() => {
+        const name = SEED_DATA.name[getRandomInt(SEED_DATA.name.length)]
+        const count = SEED_DATA.count[getRandomInt(SEED_DATA.count.length)]
+        const date = new Date(currentYear, i, getRandomInt(nDays))
+        const categoryId = category[getRandomInt(category.length)]._id
+        const userId = user._id
+        let record = {
+          name,
+          count,
+          date,
+          categoryId,
+          userId
+        }
+        return record
       })
+      await Record.create(records)
+    }
   }))
-    .then(() => {
-      console.log('SEED_USER & SEED_RECORD done!')
-      process.exit()
-    })
-    .then(err => console.log(err))
+  console.log('SEED_USER & SEED_RECORD done!')
+  process.exit()
 })
